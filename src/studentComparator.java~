@@ -1,0 +1,7 @@
+import java.util.Comparator;
+
+public class studentComparator implements Comparator<String, String> {
+	public int compare(String o1, String o2){
+		return new double(o1).compareTo(new double (o2))
+	}
+}
