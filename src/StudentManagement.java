@@ -37,7 +37,6 @@ public class StudentManagement {
 				String editName = input.nextLine();
 
 
-
 				System.out.println("What is the mark you want to change: ");
 				double editMark = input.nextDouble();
 
@@ -71,27 +70,58 @@ public class StudentManagement {
 	}
 
 	public void sortStudent() {
-		System.out.println("id. To sort by studentID: ");
-		System.out.println("name. To sort by name: ");
-		System.out.println("mark. To sort by mark: ");
-		String userChoice;
-		do {
-			userChoice = input.nextLine();
-			switch (userChoice.toLowerCase()) {
-				case "id":
-					Students.sort(Comparator.comparing(Student::getStudentID));
-					break;
-				case "name":
-					Students.sort(Comparator.comparing(Student::getStudentName));
-					break;
-				case "mark":
-					Students.sort(Comparator.comparingDouble(Student::getMarksOfStudent));
-					break;
-				default:
-					System.out.println("Please enter the right keyword (id, name, mark)");
+		int n = Students.size();
+		for (int i = 0; i < n; i++) {
+			int minIndex = i;
+			String minStudentName = Students.get(i).getStudentName();
+			for (int j = i + 1; j < n; j++) {
+				if (Students.get(j).getStudentName().compareToIgnoreCase(minStudentName) < 0) {
+					minStudentName = Students.get(j).getStudentName();
+					minIndex = j;
+				}
 			}
-		} while (userChoice.equals("id") || userChoice.equals("name") || userChoice.equals("mark"));
+			if (minIndex != i){
+				Student temp = Students.get(i);
+				Students.set(i, Students.get(minIndex));
+				Students.set(minIndex, temp);
+			}
+		}
 	}
+	// Code su dung BubbleSort
+	//		int n = Students.size();
+//		for (int i = 0; i < n; i++) {
+//			for (int j = 1; j < n; j++) {
+//				if (Students.get(i).getStudentName().compareToIgnoreCase(Students.get(j).getStudentName()) > 0) {
+//					Student temp = Students.get(i);
+//					Students.set(i, Students.get(j));
+//					Students.set(j, temp);
+//				}
+//			}
+//		}
+
+
+	// Code su dung comparator
+//		System.out.println("id. To sort by studentID: ");
+//		System.out.println("name. To sort by name: ");
+//		System.out.println("mark. To sort by mark: ");
+//		String userChoice;
+//		do {
+//			userChoice = input.nextLine();
+//			switch (userChoice.toLowerCase()) {
+//				case "id":
+//					Students.sort(Comparator.comparing(Student::getStudentID));
+//					break;
+//				case "name":
+//					Students.sort(Comparator.comparing(Student::getStudentName));
+//					break;
+//				case "mark":
+//					Students.sort(Comparator.comparingDouble(Student::getMarksOfStudent));
+//					break;
+//				default:
+//					System.out.println("Please enter the right keyword (id, name, mark)");
+//			}
+//		} while (userChoice.equals("id") || userChoice.equals("name") || userChoice.equals("mark"));
+
 
 	public void searchForStudent() {
 		System.out.println("(id) To search by studentID: ");
