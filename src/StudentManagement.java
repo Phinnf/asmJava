@@ -5,7 +5,13 @@ public class StudentManagement {
 	private final List<Student> Students = new ArrayList<>();
 	Scanner input = new Scanner(System.in);
 
+	// ------------------------------------------------------
 	public void addStudent() {
+		Student newStudent = scanForUserInput();
+		functionForAddStudent(newStudent);
+	}
+
+	public Student scanForUserInput() {
 		System.out.println("What is the studentID: ");
 		String studentID = input.nextLine();
 
@@ -16,59 +22,58 @@ public class StudentManagement {
 		double studentMark = input.nextDouble();
 		input.nextLine();
 
-		Student newStudents = new Student(studentID, studentName, studentMark);
-		String studentRank = newStudents.getScore(studentMark);
-		Student newStudentAfter = new Student(studentID, studentName, studentMark, studentRank);
-		Students.add(newStudentAfter);
+		return new Student(studentID, studentName, studentMark);
 	}
 
+	public void functionForAddStudent(Student student) {
+		Students.add(student);
+	}
+
+	// -------------------------------------------------------------
 	public void editStudent() {
 		System.out.println("Enter the student ID you want to change: ");
 		String findStudentID = input.nextLine();
 
+		int index = findStudentIndex(findStudentID);
+
+		if (index != -1) {
+			setStudent(index);
+		} else {
+			studentNotFound();
+		}
+	}
+
+	public int findStudentIndex(String studentID) {
 		for (int i = 0; i < Students.size(); i++) {
-			Student currentStudent = Students.get(i);
-			if (currentStudent.getStudentID().equals(findStudentID)) {
-				System.out.println("What is the studentID you want to change: ");
-				String editStudentID = input.nextLine();
-
-
-				System.out.println("What is the name you want to change: ");
-				String editName = input.nextLine();
-
-
-				System.out.println("What is the mark you want to change: ");
-				double editMark = input.nextDouble();
-
-
-				Student updateStudent = new Student(editStudentID, editName, editMark);
-				Students.set(i, updateStudent);
-			} else {
-				System.out.println("ID not found");
+			if (Students.get(i).getStudentID().equals(studentID)) {
+				return i;
 			}
 		}
+		return -1;
 	}
 
-	public void showStudentInfo() {
-		for (Student showStudent : Students) {
-			System.out.println(showStudent);
-		}
+	public void setStudent(int index) {
+		Student updateStudent = scanForUserInput();
+		Students.set(index, updateStudent);
 	}
 
+	// -------------------------------------------------------------
 	public void deleteStudentInfo() {
 		System.out.println("Enter the student ID you want to Delete: ");
 		String deleteStudentID = input.nextLine();
 
-		for (int i = 0; i < Students.size(); i++) {
-			Student currentStudent = Students.get(i);
-			if (currentStudent.getStudentID().equals(deleteStudentID)) {
-				Students.remove(currentStudent);
-			} else {
-				System.out.println("ID not found");
-			}
+		int index = findStudentIndex(deleteStudentID);
+
+		if (index != -1) {
+			deleteStudent(index);
 		}
 	}
 
+	public void deleteStudent(int index) {
+		Students.remove(index);
+	}
+
+	// -----------------------------------------------------------------
 	public void sortStudent() {
 		int n = Students.size();
 		for (int i = 0; i < n; i++) {
@@ -80,7 +85,7 @@ public class StudentManagement {
 					minIndex = j;
 				}
 			}
-			if (minIndex != i){
+			if (minIndex != i) {
 				Student temp = Students.get(i);
 				Students.set(i, Students.get(minIndex));
 				Students.set(minIndex, temp);
@@ -122,41 +127,72 @@ public class StudentManagement {
 //			}
 //		} while (userChoice.equals("id") || userChoice.equals("name") || userChoice.equals("mark"));
 
-
+	// ------------------------------------------------------------
 	public void searchForStudent() {
-		System.out.println("(id) To search by studentID: ");
-		System.out.println("(name) To search by name: ");
-		System.out.println("(mark) To search by mark: ");
-		String userChoice;
-		do {
-			userChoice = input.nextLine();
-			for (Student searchStudent : Students) {
-				switch (userChoice.toLowerCase()) {
-					case "id":
-						System.out.println("What is the (studentID) you want to find: ");
-						String searchStudentID = input.nextLine();
-						if (searchStudent.getStudentID().equals(searchStudentID)) {
-							System.out.println(searchStudent);
-							break;
-						}
-					case "name":
-						System.out.println("What is the student (Name) you want to find: ");
-						String searchStudentName = input.nextLine();
-						if (searchStudent.getStudentName().equals(searchStudentName)) {
-							System.out.println(searchStudent);
-							break;
-						}
-					case "mark":
-						System.out.println("What is the student (Mark) you want to find: ");
-						double searchStudentMark = input.nextDouble();
-						if (searchStudent.getMarksOfStudent() == (searchStudentMark)) {
-							System.out.println(searchStudent);
-							break;
-						}
-					default:
-						System.out.println("Please enter the right keyword(id, name, mark)");
-				}
+		System.out.println("Enter the thing you want to search (id, name, mark)");
+		String userChoice = input.nextLine();
+
+		switch (userChoice.toLowerCase()) {
+			case "id":
+				System.out.println("What is the (StudentID) you want to find ");
+				String searchStudentID = input.nextLine();
+				searchAndPrintStudent("id", searchStudentID);
+				break;
+			case "name":
+				System.out.println("What is the (StudentID) you want to find ");
+				String searchStudentName = input.nextLine();
+				searchAndPrintStudent("name", searchStudentName);
+				break;
+			case "mark":
+				System.out.println("What is the (StudentID) you want to find ");
+				String searchStudentMark = input.nextLine();
+				searchAndPrintStudent("mark", searchStudentMark);
+				break;
+			default:
+				System.out.println("Student not found");
+		}
+
+	}
+
+	public void searchAndPrintStudent(String theString, String searchStudent) {
+		for (Student student : Students) {
+			boolean studentFound = false;
+
+			switch (theString) {
+				case "id":
+					if (student.getStudentID().equals(searchStudent)) {
+						studentFound = true;
+					}
+					break;
+				case "name":
+					if (student.getStudentName().equals(searchStudent)) {
+						studentFound = true;
+					}
+					break;
+				case "mark":
+					double mark = Double.parseDouble(searchStudent);
+					if (student.getMarksOfStudent() == mark) {
+						studentFound = true;
+					}
+					break;
 			}
-		} while (!userChoice.equals("id") && !userChoice.equals("name") && !userChoice.equals("mark"));
+			if (studentFound) {
+				System.out.println(student);
+				return;
+			}
+		}
+	}
+
+	// ------------------------------------------------------
+	public void showStudentInfo() {
+		for (Student showStudent : Students) {
+			System.out.println(showStudent);
+		}
+	}
+
+	// ---------------------------------------------------
+	// Small Method
+	private static void studentNotFound() {
+		System.out.println("Student not found.");
 	}
 }

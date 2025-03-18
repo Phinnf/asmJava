@@ -2,14 +2,6 @@ public class Student {
 	private String studentID;
 	private String studentName;
 	private double marksOfStudent;
-	private String studentRank;
-
-	public Student(String studentID, String studentName, double marksOfStudent, String studentRank) {
-		this.studentID = studentID;
-		this.studentName = studentName;
-		this.marksOfStudent = marksOfStudent;
-		this.studentRank = studentRank;
-	}
 
 	public Student(String studentID, String studentName, double marksOfStudent) {
 		this.studentID = studentID;
