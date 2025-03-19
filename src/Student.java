@@ -1,7 +1,10 @@
+
+
 public class Student {
 	private String studentID;
 	private String studentName;
 	private double marksOfStudent;
+
 
 	public Student(String studentID, String studentName, double marksOfStudent) {
 		this.studentID = studentID;

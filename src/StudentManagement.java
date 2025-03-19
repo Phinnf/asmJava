@@ -1,8 +1,9 @@
+import java.text.ParseException;
 import java.util.*;
 
 public class StudentManagement {
 
-	private final List<Student> Students = new ArrayList<>();
+	private final List<Student> students = new ArrayList<>();
 	Scanner input = new Scanner(System.in);
 
 	// ------------------------------------------------------
@@ -12,21 +13,33 @@ public class StudentManagement {
 	}
 
 	public Student scanForUserInput() {
-		System.out.println("What is the studentID: ");
-		String studentID = input.nextLine();
+
+		String studentID = "#" + String.valueOf(students.size() + 1);
 
 		System.out.println("What is the studentName: ");
 		String studentName = input.nextLine();
 
-		System.out.println("What are the mark of Student: ");
-		double studentMark = input.nextDouble();
-		input.nextLine();
-
-		return new Student(studentID, studentName, studentMark);
+		double studentMark = 0;
+		do {
+			try {
+				System.out.println("What are the marks of Student: ");
+				studentMark = input.nextDouble();
+				input.nextLine();
+				while (studentMark < 0 || studentMark > 10) {
+					System.out.println("Please enter a valid number between 0 and 10.");
+					studentMark = input.nextDouble();
+					input.nextLine();
+				}
+				return new Student(studentID, studentName, studentMark);
+			} catch (InputMismatchException exception) {
+				input.nextLine();
+				System.out.println("Please enter a valid number.");
+			}
+		} while (true);
 	}
 
 	public void functionForAddStudent(Student student) {
-		Students.add(student);
+		students.add(student);
 	}
 
 	// -------------------------------------------------------------
@@ -44,8 +57,8 @@ public class StudentManagement {
 	}
 
 	public int findStudentIndex(String studentID) {
-		for (int i = 0; i < Students.size(); i++) {
-			if (Students.get(i).getStudentID().equals(studentID)) {
+		for (int i = 0; i < students.size(); i++) {
+			if (students.get(i).getStudentID().equals("#" + studentID)) {
 				return i;
 			}
 		}
@@ -54,7 +67,7 @@ public class StudentManagement {
 
 	public void setStudent(int index) {
 		Student updateStudent = scanForUserInput();
-		Students.set(index, updateStudent);
+		students.set(index, updateStudent);
 	}
 
 	// -------------------------------------------------------------
@@ -70,25 +83,25 @@ public class StudentManagement {
 	}
 
 	public void deleteStudent(int index) {
-		Students.remove(index);
+		students.remove(index);
 	}
 
 	// -----------------------------------------------------------------
 	public void sortStudent() {
-		int n = Students.size();
+		int n = students.size();
 		for (int i = 0; i < n; i++) {
 			int minIndex = i;
-			String minStudentName = Students.get(i).getStudentName();
+			double minStudentName = students.get(i).getMarksOfStudent();
 			for (int j = i + 1; j < n; j++) {
-				if (Students.get(j).getStudentName().compareToIgnoreCase(minStudentName) < 0) {
-					minStudentName = Students.get(j).getStudentName();
+				if (minStudentName < students.get(j).getMarksOfStudent()) {
+					minStudentName = students.get(j).getMarksOfStudent();
 					minIndex = j;
 				}
 			}
 			if (minIndex != i) {
-				Student temp = Students.get(i);
-				Students.set(i, Students.get(minIndex));
-				Students.set(minIndex, temp);
+				Student temp = students.get(i);
+				students.set(i, students.get(minIndex));
+				students.set(minIndex, temp);
 			}
 		}
 	}
@@ -155,7 +168,7 @@ public class StudentManagement {
 	}
 
 	public void searchAndPrintStudent(String theString, String searchStudent) {
-		for (Student student : Students) {
+		for (Student student : students) {
 			boolean studentFound = false;
 
 			switch (theString) {
@@ -185,7 +198,7 @@ public class StudentManagement {
 
 	// ------------------------------------------------------
 	public void showStudentInfo() {
-		for (Student showStudent : Students) {
+		for (Student showStudent : students) {
 			System.out.println(showStudent);
 		}
 	}

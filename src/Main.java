@@ -15,6 +15,7 @@ public class Main {
 			System.out.println("4. Sort Student ");
 			System.out.println("5. Search Student ");
 			System.out.println("6. Show Students ");
+			System.out.println("-".repeat(50));
 			userChoice = input.nextLine();
 
 			switch (userChoice) {
