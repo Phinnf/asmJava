@@ -1,45 +1,43 @@
-import java.text.ParseException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
 
 public class StudentManagement {
-
+	public static final AtomicInteger counter = new AtomicInteger();
 	private final List<Student> students = new ArrayList<>();
 	Scanner input = new Scanner(System.in);
 
 	// ------------------------------------------------------
 	public void addStudent() {
-		Student newStudent = scanForUserInput();
-		functionForAddStudent(newStudent);
+		Student newStudent = new Student(increaseStudentID(), scanForUserInputName(), scanForUserInputMark());
+		students.add(newStudent);
 	}
 
-	public Student scanForUserInput() {
+	public String increaseStudentID() {
+		return "#" + counter.incrementAndGet();
+	}
 
-		String studentID = "#" + String.valueOf(students.size() + 1);
-
+	public String scanForUserInputName() {
 		System.out.println("What is the studentName: ");
-		String studentName = input.nextLine();
+		return input.nextLine();
+	}
 
-		double studentMark = 0;
+	public double scanForUserInputMark() {
 		do {
 			try {
 				System.out.println("What are the marks of Student: ");
-				studentMark = input.nextDouble();
+				double studentMark = input.nextDouble();
 				input.nextLine();
 				while (studentMark < 0 || studentMark > 10) {
 					System.out.println("Please enter a valid number between 0 and 10.");
 					studentMark = input.nextDouble();
 					input.nextLine();
 				}
-				return new Student(studentID, studentName, studentMark);
+				return studentMark;
 			} catch (InputMismatchException exception) {
-				input.nextLine();
-				System.out.println("Please enter a valid number.");
+				System.out.println("Please enter a valid number." + exception);
 			}
 		} while (true);
-	}
-
-	public void functionForAddStudent(Student student) {
-		students.add(student);
 	}
 
 	// -------------------------------------------------------------
@@ -58,7 +56,7 @@ public class StudentManagement {
 
 	public int findStudentIndex(String studentID) {
 		for (int i = 0; i < students.size(); i++) {
-			if (students.get(i).getStudentID().equals("#" + studentID)) {
+			if (students.get(i).getStudentID().equals(studentID)) {
 				return i;
 			}
 		}
@@ -66,8 +64,14 @@ public class StudentManagement {
 	}
 
 	public void setStudent(int index) {
-		Student updateStudent = scanForUserInput();
-		students.set(index, updateStudent);
+		Student existingStudent = students.get(index);
+		existingStudent.setStudentName(scanForUserInputName());
+		existingStudent.setMarksOfStudent(scanForUserInputMark());
+	}
+
+	public String scanForUserID() {
+		System.out.println("What is the Student new ID ");
+		return input.nextLine();
 	}
 
 	// -------------------------------------------------------------
@@ -76,7 +80,6 @@ public class StudentManagement {
 		String deleteStudentID = input.nextLine();
 
 		int index = findStudentIndex(deleteStudentID);
-
 		if (index != -1) {
 			deleteStudent(index);
 		}
@@ -90,18 +93,18 @@ public class StudentManagement {
 	public void sortStudent() {
 		int n = students.size();
 		for (int i = 0; i < n; i++) {
-			int minIndex = i;
+			int maxIndex = i;
 			double minStudentName = students.get(i).getMarksOfStudent();
 			for (int j = i + 1; j < n; j++) {
 				if (minStudentName < students.get(j).getMarksOfStudent()) {
 					minStudentName = students.get(j).getMarksOfStudent();
-					minIndex = j;
+					maxIndex = j;
 				}
 			}
-			if (minIndex != i) {
+			if (maxIndex != i) {
 				Student temp = students.get(i);
-				students.set(i, students.get(minIndex));
-				students.set(minIndex, temp);
+				students.set(i, students.get(maxIndex));
+				students.set(maxIndex, temp);
 			}
 		}
 	}
@@ -167,10 +170,9 @@ public class StudentManagement {
 
 	}
 
-	public void searchAndPrintStudent(String theString, String searchStudent) {
+	public void searchAndPrintStudent(String theString /*String in Switch*/, String searchStudent) {
 		for (Student student : students) {
 			boolean studentFound = false;
-
 			switch (theString) {
 				case "id":
 					if (student.getStudentID().equals(searchStudent)) {
